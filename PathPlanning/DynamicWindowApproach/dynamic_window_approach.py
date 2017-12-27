@@ -23,7 +23,7 @@ github_root = os.path.join(os.path.dirname(__file__), '../../../')
 sys.path.append(github_root)
 
 from matplotrecorder import matplotrecorder
-matplotrecorder.donothing = True
+matplotrecorder.donothing = False
 
 
 class Config():
@@ -44,12 +44,12 @@ class Config():
         self.dt = 0.1  # [s]
         self.predict_time = 3.0  # [s]
 
-        self.to_goal_cost_gain = 1.0
-        self.speed_cost_gain = 0.0
-        self.obs_cost_gain = 0.000000000000000000000000000000000001
+        self.to_goal_cost_gain = 0.2
+        self.speed_cost_gain = 0.45
+        self.obs_cost_gain = 7.0
 
-        self.robot_radius = 2.7  # [m]
-        self.goal_area = 0.5 # [m]
+        self.robot_radius = 1.0  # [m]
+        self.goal_area = 0.3 # [m]
 
 
 def motion(x, u, dt):
@@ -196,18 +196,29 @@ def plot_arrow(x, y, yaw, length=0.5, width=0.1):
 def main():
     print(__file__ + " start!!")
     # initial state [x(m), y(m), yaw(rad), v(m/s), omega(rad/s)]
-    x = np.array([0.0, 0.0, math.pi / 8.0, 0.0, 0.0])
+    x = np.array([0.0, 0.0, math.pi / 2.0, 0.0, 0.0])
     # goal position [x(m), y(m)]
-    goal = np.array([10, 10])
+    goal = np.array([0, 20])
     # obstacles [x(m) y(m), ....]
-    ob = np.matrix([[4.0, 2.0],
-                    [5.0, 4.0],
-                    [5.0, 5.0],
-                    [5.0, 6.0],
-                    [5.0, 9.0],
-                    [8.0, 9.0],
-                    [7.0, 9.0],
-                    [12.0, 12.0]
+    ob = np.matrix([[-4.0, 5.0],
+                    [-4.0, 6.0],
+                    [-4.0, 7.0],
+                    [-4.0, 8.0],
+                    [-4.0, 9.0],
+                    [-4.0, 10.0],
+                    [-3.0, 10.0],
+                    [-2.0, 10.0],
+                    [-1.0, 10.0],
+                    [0.0, 10.0],
+                    [1.0, 10.0],
+                    [2.0, 10.0],
+                    [3.0, 10.0],
+                    [4.0, 10.0],
+                    [5.0, 10.0],
+                    [6.0, 10.0],
+                    [7.0, 10.0],
+                    [8.0, 10.0],
+                    [9.0, 10.0]
                     ])
 
     u = np.array([0.0, 0.0])
@@ -217,11 +228,11 @@ def main():
     for i in range(1000):
         print("################# STEP {} #################".format(i))
 
-        if i == 330:
-            config.to_goal_cost_gain = 0.0
-            config.speed_cost_gain = 0.0
-            config.obs_cost_gain = 999
-            print("################# escape ################# ")
+        # if i == 330:
+        #     config.to_goal_cost_gain = 0.0
+        #     config.speed_cost_gain = 0.0
+        #     config.obs_cost_gain = 999
+        #     print("################# escape ################# ")
         
         plt.cla()
         u, ltraj = dwa_control(x, u, config, goal, ob)
@@ -257,7 +268,7 @@ def main():
     print("Done")
     plt.plot(traj[:, 0], traj[:, 1], "-r")
     matplotrecorder.save_frame()
-    matplotrecorder.save_movie("animation.gif", 0.1)
+    matplotrecorder.save_movie("animation.gif", config.dt, monitor = False)
     plt.show()
 
 

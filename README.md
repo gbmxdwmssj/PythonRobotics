@@ -52,6 +52,10 @@ Python codes for robotics algorithm.
 
 - matplotlib
 
+- sudo apt-get install imagemagick (make matplotrecorder.py work normally when save .gif file)
+
+- install ffmpeg (google how to install and this is required if you want to save video such as .mp4 by matplotrecorder.py)
+
 - [pyReedsShepp](https://github.com/ghliu/pyReedsShepp) (Only for reeds sheep path and RRTStarCar_reeds_sheep)
 
 - [cvxpy](https://cvxgrp.github.io/cvxpy/index.html) (Only for mix integer optimization based model predictive planning and control)
