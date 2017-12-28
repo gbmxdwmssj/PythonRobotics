@@ -23,7 +23,7 @@ github_root = os.path.join(os.path.dirname(__file__), '../../../')
 sys.path.append(github_root)
 
 from matplotrecorder import matplotrecorder
-matplotrecorder.donothing = False
+matplotrecorder.DO_NOTHING = True
 
 
 class Config():
@@ -31,7 +31,7 @@ class Config():
 
     def __init__(self):
         # robot parameter
-        self.max_speed = 1.0  # [m/s]
+        self.max_speed = 2.0  # [m/s]
         self.min_speed = -0.5  # [m/s]
         self.max_yawrate = 40.0 * math.pi / 180.0  # [rad/s]
 
@@ -268,7 +268,7 @@ def main():
     print("Done")
     plt.plot(traj[:, 0], traj[:, 1], "-r")
     matplotrecorder.save_frame()
-    matplotrecorder.save_movie("animation.gif", config.dt, monitor = False)
+    matplotrecorder.save_movie("animation.gif", config.dt)
     plt.show()
 
 

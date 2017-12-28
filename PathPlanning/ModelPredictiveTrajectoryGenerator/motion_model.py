@@ -1,6 +1,7 @@
 import math
 import numpy as np
 import scipy.interpolate
+import matplotlib.pyplot as plt
 
 # motion parameter
 L = 1.0  # wheel base
@@ -16,6 +17,12 @@ class State:
         self.yaw = yaw
         self.v = v
 
+class ModelConfig:
+
+    def __init__(self):
+        self.min_steer = math.radians(-40.0)
+        self.max_steer = math.radians(40.0)
+
 
 def pi_2_pi(angle):
     while(angle > math.pi):
@@ -28,6 +35,13 @@ def pi_2_pi(angle):
 
 
 def update(state, v, delta, dt, L):
+
+    ## Ackermann model
+    ## limit amplitude
+    ## TODO: outside also need amplitude limiting?
+
+    model_cfg = ModelConfig()
+    delta = np.clip(delta, model_cfg.min_steer, model_cfg.max_steer) # steering min and max [rad]
 
     state.v = v
     state.x = state.x + state.v * math.cos(state.yaw) * dt
@@ -46,10 +60,10 @@ def generate_trajectory(s, km, kf, k0):
     kk = np.array([k0, km, kf])
     t = np.arange(0.0, time, time / n)
     kp = scipy.interpolate.spline(tk, kk, t, order=2)
-    dt = float(time / n)
+    dt = float(time / n) # discretized by equal distance "ds"
 
-    #  plt.plot(t, kp)
-    #  plt.show()
+    # plt.plot(t, kp)
+    # plt.show()
 
     state = State()
     x, y, yaw = [state.x], [state.y], [state.yaw]
@@ -78,5 +92,5 @@ def generate_last_state(s, km, kf, k0):
 
     state = State()
 
-    [update(state, v, ikp, dt, L) for ikp in kp]
+    [update(state, v, ikp, dt, L) for ikp in kp] # for class, no return is ok, this has been tested.
     return state.x, state.y, state.yaw
