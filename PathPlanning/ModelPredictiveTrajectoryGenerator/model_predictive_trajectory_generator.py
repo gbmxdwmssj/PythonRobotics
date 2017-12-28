@@ -30,7 +30,7 @@ max_iter = 150
 h = np.matrix([0.5, 0.02, 0.02]).T  # parameter sampling distance
 cost_th = 0.1
 
-matplotrecorder.DO_NOTHING = False
+matplotrecorder.DO_NOTHING = True
 show_graph = True
 
 def limitP(p, cfg):
@@ -177,7 +177,7 @@ def test_optimize_trajectory():
     k0 = 0.0
 
     init_p_len = math.sqrt(target.x**2 + target.y**2)
-    init_p = np.matrix([1.0, 0.0, 0.0]).T
+    init_p = np.matrix([init_p_len, 0.0, 0.0]).T
     init_p = limitP(init_p, mcfg)
 
     x, y, yaw, p = optimize_trajectory(target, k0, init_p)
