@@ -38,7 +38,7 @@ def update(state, v, delta, dt, L):
 
     ## Ackermann model
     ## limit amplitude
-    ## TODO: outside also need amplitude limiting?
+    ## TODO: actual path length isn't equal to path length (s or p[0]) in parameterized control sequence (p)?
 
     model_cfg = ModelConfig()
     delta = np.clip(delta, model_cfg.min_steer, model_cfg.max_steer) # steering min and max [rad]

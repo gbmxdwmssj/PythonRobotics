@@ -3,21 +3,30 @@ Model trajectory generator
 
 author: Atsushi Sakai
 
+This sample program doesn't optimize the cost function in the original paper.
+
+The initial state is assumed to be (0, 0, 0) in this program. Other initial states can be rotated and translated to (0, 0, 0).
+
 the design of p can be improved, only two steer, v is connstant, no acceleration and deacceleration
 
 Jacobian: the calculation of Jacobian may be not right? (if steer limit is small, can't optimize!? or cost threshold too small?),
-Jacobian: up and down on the starting of optimization is also a problem
+Jacobian: up and down at the starting of optimization is also a problem
 Jacobian: what is the optimization's theory?
 Jacobian: if the initial path is too long, can't optimize!?
+Jacobian: what we are optimizing?
+Jacobian: maybe local minimum cause the failure of optimization?
+Jacobian: too close target also doesn't work, of cource this is partly related to the amplitude of steering, but the process is not too right
 """
 
 import os
 import sys
-import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 import math
 import motion_model
+from colorama import init as clr_ama_init
+from colorama import Fore
+clr_ama_init(autoreset = True) # anto reset to default color if color not set
 
 ## get directory of matplotrecorder
 github_root = os.path.join(os.path.dirname(__file__), '../../../')
@@ -31,7 +40,7 @@ h = np.matrix([0.5, 0.02, 0.02]).T  # parameter sampling distance
 cost_th = 0.1
 
 matplotrecorder.DO_NOTHING = True
-show_graph = True
+show_graph = False
 
 def limitP(p, cfg):
     p[1, 0] = np.clip(p[1, 0], cfg.min_steer, cfg.max_steer)
@@ -149,7 +158,7 @@ def optimize_trajectory(target, k0, p):
             dp = limitDp(dp, mcfg, p)
         except np.linalg.linalg.LinAlgError:
             ## optimize fail
-            warnings.warn("cannot calc path LinAlgError")
+            print(Fore.YELLOW + "cannot calc path LinAlgError")
             xc, yc, yawc, p = None, None, None, None
             break
         alpha = selection_learning_param(dp, p, k0, target) # choose learning rate
@@ -164,7 +173,7 @@ def optimize_trajectory(target, k0, p):
         ## optimize fail
         ## if no break, enter here
         xc, yc, yawc, p = None, None, None, None
-        warnings.warn("cannot calc path")
+        print(Fore.YELLOW + "cannot calc path")
 
     return xc, yc, yawc, p
 
@@ -173,7 +182,7 @@ def test_optimize_trajectory():
     mcfg = motion_model.ModelConfig()
 
     #  target = motion_model.State(x=5.0, y=2.0, yaw=math.radians(00.0))
-    target = motion_model.State(x=5.0, y=2.0, yaw=math.radians(0.0))
+    target = motion_model.State(x=1.0, y=0.0, yaw=math.radians(30.0))
     k0 = 0.0
 
     init_p_len = math.sqrt(target.x**2 + target.y**2)
